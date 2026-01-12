@@ -11,6 +11,7 @@ public class ErrorResponse {
     private String error;
     private String message;
     private String path;
+    private String correlationId;
     private List<String> errors;
 
     public ErrorResponse() {
@@ -27,6 +28,16 @@ public class ErrorResponse {
 
     public ErrorResponse(int status, String error, String message, String path, List<String> errors) {
         this(status, error, message, path);
+        this.errors = errors;
+    }
+
+    public ErrorResponse(int status, String error, String message, String path, String correlationId) {
+        this(status, error, message, path);
+        this.correlationId = correlationId;
+    }
+
+    public ErrorResponse(int status, String error, String message, String path, String correlationId, List<String> errors) {
+        this(status, error, message, path, correlationId);
         this.errors = errors;
     }
 
@@ -86,6 +97,14 @@ public class ErrorResponse {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public String getCorrelationId() {
+        return correlationId;
+    }
+
+    public void setCorrelationId(String correlationId) {
+        this.correlationId = correlationId;
     }
 
     public List<String> getErrors() {

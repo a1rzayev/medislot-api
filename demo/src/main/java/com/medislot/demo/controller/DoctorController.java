@@ -78,6 +78,18 @@ public class DoctorController {
     }
 
     /**
+     * Get active doctors only
+     * GET /api/doctors/active
+     * NOTE: This must be defined BEFORE /{id} to avoid path matching conflicts
+     */
+    @GetMapping("/active")
+    public ResponseEntity<ApiResponse<List<DoctorResponse>>> getActiveDoctors() {
+        List<DoctorResponse> doctors = doctorService.findAllActive();
+        return ResponseEntity.ok(
+                ResponseHelper.success(doctors, "Active doctors retrieved successfully"));
+    }
+
+    /**
      * Get doctor by ID
      * GET /api/doctors/{id}
      */
@@ -135,16 +147,5 @@ public class DoctorController {
         DoctorResponse doctor = doctorService.activate(id);
         return ResponseEntity.ok(
                 ResponseHelper.success(doctor, "Doctor activated successfully"));
-    }
-
-    /**
-     * Get active doctors only
-     * GET /api/doctors/active
-     */
-    @GetMapping("/active")
-    public ResponseEntity<ApiResponse<List<DoctorResponse>>> getActiveDoctors() {
-        List<DoctorResponse> doctors = doctorService.findAllActive();
-        return ResponseEntity.ok(
-                ResponseHelper.success(doctors, "Active doctors retrieved successfully"));
     }
 }

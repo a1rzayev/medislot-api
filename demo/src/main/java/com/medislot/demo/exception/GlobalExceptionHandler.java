@@ -1,7 +1,10 @@
 package com.medislot.demo.exception;
 
 import com.medislot.demo.dto.ErrorResponse;
+import com.medislot.demo.util.CorrelationIdHolder;
 import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -17,6 +20,8 @@ import java.util.List;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    
+    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     /**
      * Helper method to extract request path
@@ -28,17 +33,28 @@ public class GlobalExceptionHandler {
         }
         return request.getDescription(false).replace("uri=", "");
     }
+    
+    /**
+     * Helper method to get correlation ID from ThreadLocal
+     */
+    private String getCorrelationId() {
+        return CorrelationIdHolder.getCorrelationId();
+    }
 
     /**
      * Handle NotFoundException (404)
      */
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ErrorResponse> handleNotFoundException(NotFoundException ex, WebRequest request) {
+        logger.warn("NotFoundException: {} - Path: {} - CorrelationId: {}", 
+                ex.getMessage(), getRequestPath(request), getCorrelationId());
+        
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.NOT_FOUND.value(),
                 HttpStatus.NOT_FOUND.getReasonPhrase(),
                 ex.getMessage(),
-                getRequestPath(request)
+                getRequestPath(request),
+                getCorrelationId()
         );
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
@@ -48,11 +64,15 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ErrorResponse> handleBadRequestException(BadRequestException ex, WebRequest request) {
+        logger.warn("BadRequestException: {} - Path: {} - CorrelationId: {}", 
+                ex.getMessage(), getRequestPath(request), getCorrelationId());
+        
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
                 HttpStatus.BAD_REQUEST.getReasonPhrase(),
                 ex.getMessage(),
-                getRequestPath(request)
+                getRequestPath(request),
+                getCorrelationId()
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
@@ -62,11 +82,15 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(ConflictException.class)
     public ResponseEntity<ErrorResponse> handleConflictException(ConflictException ex, WebRequest request) {
+        logger.warn("ConflictException: {} - Path: {} - CorrelationId: {}", 
+                ex.getMessage(), getRequestPath(request), getCorrelationId());
+        
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.CONFLICT.value(),
                 HttpStatus.CONFLICT.getReasonPhrase(),
                 ex.getMessage(),
-                getRequestPath(request)
+                getRequestPath(request),
+                getCorrelationId()
         );
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
@@ -76,11 +100,15 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(ForbiddenException.class)
     public ResponseEntity<ErrorResponse> handleForbiddenException(ForbiddenException ex, WebRequest request) {
+        logger.warn("ForbiddenException: {} - Path: {} - CorrelationId: {}", 
+                ex.getMessage(), getRequestPath(request), getCorrelationId());
+        
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.FORBIDDEN.value(),
                 HttpStatus.FORBIDDEN.getReasonPhrase(),
                 ex.getMessage(),
-                getRequestPath(request)
+                getRequestPath(request),
+                getCorrelationId()
         );
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
     }
@@ -104,11 +132,15 @@ public class GlobalExceptionHandler {
             }
         });
 
+        logger.warn("Validation errors: {} - Path: {} - CorrelationId: {}", 
+                errorMessages, getRequestPath(request), getCorrelationId());
+
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
                 HttpStatus.BAD_REQUEST.getReasonPhrase(),
                 "Validation failed",
                 getRequestPath(request),
+                getCorrelationId(),
                 errorMessages
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
@@ -121,11 +153,15 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(
             IllegalArgumentException ex, 
             WebRequest request) {
+        logger.warn("IllegalArgumentException: {} - Path: {} - CorrelationId: {}", 
+                ex.getMessage(), getRequestPath(request), getCorrelationId());
+        
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
                 HttpStatus.BAD_REQUEST.getReasonPhrase(),
                 ex.getMessage(),
-                getRequestPath(request)
+                getRequestPath(request),
+                getCorrelationId()
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
@@ -137,11 +173,15 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleResourceNotFoundException(
             ResourceNotFoundException ex, 
             WebRequest request) {
+        logger.warn("ResourceNotFoundException: {} - Path: {} - CorrelationId: {}", 
+                ex.getMessage(), getRequestPath(request), getCorrelationId());
+        
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.NOT_FOUND.value(),
                 HttpStatus.NOT_FOUND.getReasonPhrase(),
                 ex.getMessage(),
-                getRequestPath(request)
+                getRequestPath(request),
+                getCorrelationId()
         );
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
@@ -153,11 +193,15 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleDoctorDeletionNotAllowedException(
             DoctorDeletionNotAllowedException ex, 
             WebRequest request) {
+        logger.warn("DoctorDeletionNotAllowedException: {} - Path: {} - CorrelationId: {}", 
+                ex.getMessage(), getRequestPath(request), getCorrelationId());
+        
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.CONFLICT.value(),
                 HttpStatus.CONFLICT.getReasonPhrase(),
                 ex.getMessage(),
-                getRequestPath(request)
+                getRequestPath(request),
+                getCorrelationId()
         );
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
@@ -167,11 +211,15 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException ex, WebRequest request) {
+        logger.error("RuntimeException: {} - Path: {} - CorrelationId: {}", 
+                ex.getMessage(), getRequestPath(request), getCorrelationId(), ex);
+        
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
                 ex.getMessage(),
-                getRequestPath(request)
+                getRequestPath(request),
+                getCorrelationId()
         );
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
@@ -181,11 +229,15 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(Exception ex, WebRequest request) {
+        logger.error("Unexpected exception: {} - Path: {} - CorrelationId: {}", 
+                ex.getMessage(), getRequestPath(request), getCorrelationId(), ex);
+        
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
                 "An unexpected error occurred",
-                getRequestPath(request)
+                getRequestPath(request),
+                getCorrelationId()
         );
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }

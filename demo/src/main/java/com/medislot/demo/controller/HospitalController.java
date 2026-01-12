@@ -73,6 +73,18 @@ public class HospitalController {
     }
 
     /**
+     * Get active hospitals only
+     * GET /api/hospitals/active
+     * NOTE: This must be defined BEFORE /{id} to avoid path matching conflicts
+     */
+    @GetMapping("/active")
+    public ResponseEntity<ApiResponse<List<HospitalResponse>>> getActiveHospitals() {
+        List<HospitalResponse> hospitals = hospitalService.findAllActive();
+        return ResponseEntity.ok(
+                ResponseHelper.success(hospitals, "Active hospitals retrieved successfully"));
+    }
+
+    /**
      * Get hospital by ID
      * GET /api/hospitals/{id}
      */
@@ -82,17 +94,6 @@ public class HospitalController {
                 .orElseThrow(() -> new ResourceNotFoundException("Hospital", id));
         return ResponseEntity.ok(
                 ResponseHelper.success(hospital, "Hospital retrieved successfully"));
-    }
-
-    /**
-     * Get active hospitals only
-     * GET /api/hospitals/active
-     */
-    @GetMapping("/active")
-    public ResponseEntity<ApiResponse<List<HospitalResponse>>> getActiveHospitals() {
-        List<HospitalResponse> hospitals = hospitalService.findAllActive();
-        return ResponseEntity.ok(
-                ResponseHelper.success(hospitals, "Active hospitals retrieved successfully"));
     }
 
     /**

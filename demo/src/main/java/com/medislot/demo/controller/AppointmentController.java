@@ -98,20 +98,9 @@ public class AppointmentController {
     }
 
     /**
-     * Get appointment by ID
-     * GET /api/appointments/{id}
-     */
-    @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<AppointmentResponse>> getAppointmentById(@PathVariable UUID id) {
-        AppointmentResponse appointment = appointmentService.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Appointment", id));
-        return ResponseEntity.ok(
-                ResponseHelper.success(appointment, "Appointment retrieved successfully"));
-    }
-
-    /**
      * Get appointments by patient ID
      * GET /api/appointments/patient/{patientId}
+     * NOTE: Specific paths like /patient/, /doctor/, /hospital/ must be defined BEFORE /{id}
      */
     @GetMapping("/patient/{patientId}")
     public ResponseEntity<ApiResponse<List<AppointmentResponse>>> getAppointmentsByPatient(
@@ -153,6 +142,19 @@ public class AppointmentController {
         List<AppointmentResponse> appointments = appointmentService.findByHospitalId(hospitalId);
         return ResponseEntity.ok(
                 ResponseHelper.success(appointments, "Hospital appointments retrieved successfully"));
+    }
+
+    /**
+     * Get appointment by ID
+     * GET /api/appointments/{id}
+     * NOTE: This generic /{id} endpoint must be defined AFTER more specific paths
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<AppointmentResponse>> getAppointmentById(@PathVariable UUID id) {
+        AppointmentResponse appointment = appointmentService.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment", id));
+        return ResponseEntity.ok(
+                ResponseHelper.success(appointment, "Appointment retrieved successfully"));
     }
 
     /**
