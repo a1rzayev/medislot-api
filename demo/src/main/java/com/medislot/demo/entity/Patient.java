@@ -19,7 +19,7 @@ public class Patient extends BaseEntity {
     @Column(name = "email")
     private String email;
 
-    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "patient")
     private Set<Appointment> appointments = new HashSet<>();
 
     public String getFullName() {
