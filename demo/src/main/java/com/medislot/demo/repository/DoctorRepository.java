@@ -18,6 +18,26 @@ public interface DoctorRepository extends JpaRepository<Doctor, UUID> {
     List<Doctor> findByActiveTrue();
     
     /**
+     * Find doctors by specialty
+     */
+    List<Doctor> findBySpecialty(String specialty);
+    
+    /**
+     * Find active doctors by specialty
+     */
+    List<Doctor> findByActiveTrueAndSpecialty(String specialty);
+    
+    /**
+     * Find doctors by specialty (case-insensitive)
+     */
+    List<Doctor> findBySpecialtyIgnoreCase(String specialty);
+    
+    /**
+     * Find active doctors by specialty (case-insensitive)
+     */
+    List<Doctor> findByActiveTrueAndSpecialtyIgnoreCase(String specialty);
+    
+    /**
      * Check if doctor has any slots
      */
     @Query("SELECT CASE WHEN COUNT(s) > 0 THEN true ELSE false END FROM Slot s WHERE s.doctorId = :doctorId")

@@ -61,4 +61,17 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
            "AND DATE(s.startTime) = DATE(:date)")
     List<Appointment> findByDoctorIdAndDate(@Param("doctorId") UUID doctorId,
                                             @Param("date") OffsetDateTime date);
+    
+    /**
+     * Find appointments by multiple criteria
+     */
+    @Query("SELECT a FROM Appointment a " +
+           "WHERE (:doctorId IS NULL OR a.doctorId = :doctorId) " +
+           "AND (:patientId IS NULL OR a.patientId = :patientId) " +
+           "AND (:hospitalId IS NULL OR a.hospitalId = :hospitalId) " +
+           "AND (:status IS NULL OR a.status = :status)")
+    List<Appointment> findByCriteria(@Param("doctorId") UUID doctorId,
+                                     @Param("patientId") UUID patientId,
+                                     @Param("hospitalId") UUID hospitalId,
+                                     @Param("status") AppointmentStatus status);
 }

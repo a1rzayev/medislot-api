@@ -32,4 +32,18 @@ public interface DoctorService extends BaseService<Doctor, UUID, DoctorCreateReq
      * @return the activated doctor response
      */
     DoctorResponse activate(UUID id);
+    
+    /**
+     * Find doctors by specialty (case-insensitive)
+     * @param specialty the specialty to filter by
+     * @return list of doctor responses with matching specialty
+     */
+    List<DoctorResponse> findBySpecialtyIgnoreCase(String specialty);
+    
+    /**
+     * Find active doctors by specialty (case-insensitive)
+     * @param specialty the specialty to filter by
+     * @return list of active doctor responses with matching specialty
+     */
+    List<DoctorResponse> findActiveBySpecialtyIgnoreCase(String specialty);
 }
