@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.OffsetDateTime;
@@ -36,8 +37,10 @@ public class AvailabilityController {
     /**
      * Create a new availability slot
      * POST /api/availability
+     * Access: ADMIN or DOCTOR (for their own slots)
      */
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
     public ResponseEntity<ApiResponse<SlotResponse>> createSlot(
             @Valid @RequestBody SlotCreateRequest request) {
         SlotResponse slot = availabilityService.create(request);
@@ -126,8 +129,10 @@ public class AvailabilityController {
     /**
      * Mark a slot as booked
      * POST /api/availability/{id}/book
+     * Access: ADMIN or DOCTOR (for their own slots)
      */
     @PostMapping("/{id}/book")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
     public ResponseEntity<ApiResponse<SlotResponse>> bookSlot(@PathVariable UUID id) {
         SlotResponse slot = availabilityService.markAsBooked(id);
         return ResponseEntity.ok(
@@ -137,8 +142,10 @@ public class AvailabilityController {
     /**
      * Mark a slot as available
      * POST /api/availability/{id}/available
+     * Access: ADMIN or DOCTOR (for their own slots)
      */
     @PostMapping("/{id}/available")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
     public ResponseEntity<ApiResponse<SlotResponse>> markSlotAsAvailable(@PathVariable UUID id) {
         SlotResponse slot = availabilityService.markAsAvailable(id);
         return ResponseEntity.ok(
@@ -148,8 +155,10 @@ public class AvailabilityController {
     /**
      * Update slot status
      * PATCH /api/availability/{id}/status
+     * Access: ADMIN or DOCTOR (for their own slots)
      */
     @PatchMapping("/{id}/status")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
     public ResponseEntity<ApiResponse<SlotResponse>> updateSlotStatus(
             @PathVariable UUID id,
             @RequestParam SlotStatus status) {
@@ -161,8 +170,10 @@ public class AvailabilityController {
     /**
      * Delete a slot
      * DELETE /api/availability/{id}
+     * Access: ADMIN or DOCTOR (for their own slots)
      */
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
     public ResponseEntity<ApiResponse<Void>> deleteSlot(@PathVariable UUID id) {
         availabilityService.delete(id);
         return ResponseEntity.ok(

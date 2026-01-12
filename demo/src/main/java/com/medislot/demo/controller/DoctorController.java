@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,9 +37,11 @@ public class DoctorController {
     /**
      * Create a new doctor
      * POST /api/doctors
+     * Access: ADMIN only
      */
     @PostMapping
-    @Operation(summary = "Create a new doctor", description = "Creates a new doctor in the system")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Create a new doctor", description = "Creates a new doctor in the system (ADMIN only)")
     public ResponseEntity<ApiResponse<DoctorResponse>> createDoctor(
             @Valid @RequestBody DoctorCreateRequest request) {
         DoctorResponse doctor = doctorService.create(request);
@@ -106,8 +109,10 @@ public class DoctorController {
     /**
      * Update a doctor
      * PUT /api/doctors/{id}
+     * Access: ADMIN only
      */
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<DoctorResponse>> updateDoctor(
             @PathVariable UUID id,
             @Valid @RequestBody DoctorUpdateRequest request) {
@@ -119,8 +124,10 @@ public class DoctorController {
     /**
      * Delete a doctor (soft delete - deactivates the doctor)
      * DELETE /api/doctors/{id}
+     * Access: ADMIN only
      */
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deleteDoctor(@PathVariable UUID id) {
         doctorService.delete(id);
         return ResponseEntity.ok(
@@ -130,8 +137,10 @@ public class DoctorController {
     /**
      * Deactivate a doctor
      * POST /api/doctors/{id}/deactivate
+     * Access: ADMIN only
      */
     @PostMapping("/{id}/deactivate")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<DoctorResponse>> deactivateDoctor(@PathVariable UUID id) {
         DoctorResponse doctor = doctorService.deactivate(id);
         return ResponseEntity.ok(
@@ -141,8 +150,10 @@ public class DoctorController {
     /**
      * Activate a doctor
      * POST /api/doctors/{id}/activate
+     * Access: ADMIN only
      */
     @PostMapping("/{id}/activate")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<DoctorResponse>> activateDoctor(@PathVariable UUID id) {
         DoctorResponse doctor = doctorService.activate(id);
         return ResponseEntity.ok(

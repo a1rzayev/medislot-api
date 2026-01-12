@@ -14,6 +14,7 @@ import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -41,8 +42,10 @@ public class AppointmentController {
      * Create a new appointment (Patient creates appointment request)
      * POST /api/appointments
      * Business Rule: Patient can request appointments for available slots
+     * Access: PATIENT (or ADMIN)
      */
     @PostMapping
+    @PreAuthorize("hasAnyRole('PATIENT', 'ADMIN')")
     @Operation(summary = "Create appointment", description = "Patient creates a new appointment request for an available slot")
     public ResponseEntity<ApiResponse<AppointmentResponse>> createAppointment(
             @Valid @RequestBody AppointmentCreateRequest request) {
@@ -161,8 +164,10 @@ public class AppointmentController {
      * Approve an appointment (Doctor approves appointment request)
      * POST /api/appointments/{id}/approve
      * Business Rule: Only doctor can approve their appointments
+     * Access: DOCTOR or ADMIN
      */
     @PostMapping("/{id}/approve")
+    @PreAuthorize("hasAnyRole('DOCTOR', 'ADMIN')")
     public ResponseEntity<ApiResponse<AppointmentResponse>> approveAppointment(
             @PathVariable UUID id,
             @RequestParam UUID doctorId) {
@@ -175,8 +180,10 @@ public class AppointmentController {
      * Deny an appointment (Doctor denies appointment request)
      * POST /api/appointments/{id}/deny
      * Business Rule: Only doctor can deny their appointments
+     * Access: DOCTOR or ADMIN
      */
     @PostMapping("/{id}/deny")
+    @PreAuthorize("hasAnyRole('DOCTOR', 'ADMIN')")
     public ResponseEntity<ApiResponse<AppointmentResponse>> denyAppointment(
             @PathVariable UUID id,
             @RequestParam UUID doctorId) {
@@ -189,8 +196,10 @@ public class AppointmentController {
      * Cancel an appointment by patient
      * POST /api/appointments/{id}/cancel/patient
      * Business Rule: Patient can cancel before appointment time
+     * Access: PATIENT or ADMIN
      */
     @PostMapping("/{id}/cancel/patient")
+    @PreAuthorize("hasAnyRole('PATIENT', 'ADMIN')")
     @Operation(summary = "Cancel appointment (Patient)", description = "Patient cancels their appointment before the scheduled time")
     public ResponseEntity<ApiResponse<AppointmentResponse>> cancelAppointmentByPatient(
             @Parameter(description = "Appointment ID") @PathVariable UUID id,
@@ -204,8 +213,10 @@ public class AppointmentController {
      * Cancel an appointment by doctor
      * POST /api/appointments/{id}/cancel/doctor
      * Business Rule: Doctor can only cancel appointments for same day
+     * Access: DOCTOR or ADMIN
      */
     @PostMapping("/{id}/cancel/doctor")
+    @PreAuthorize("hasAnyRole('DOCTOR', 'ADMIN')")
     @Operation(summary = "Cancel appointment (Doctor)", description = "Doctor cancels appointment (same day only)")
     public ResponseEntity<ApiResponse<AppointmentResponse>> cancelAppointmentByDoctor(
             @Parameter(description = "Appointment ID") @PathVariable UUID id,
@@ -219,8 +230,10 @@ public class AppointmentController {
      * Reschedule an appointment (same day)
      * POST /api/appointments/{id}/reschedule
      * Business Rule: Doctor can reschedule to another slot on same day
+     * Access: DOCTOR or ADMIN
      */
     @PostMapping("/{id}/reschedule")
+    @PreAuthorize("hasAnyRole('DOCTOR', 'ADMIN')")
     public ResponseEntity<ApiResponse<AppointmentResponse>> rescheduleAppointment(
             @PathVariable UUID id,
             @RequestParam UUID doctorId,
@@ -249,8 +262,10 @@ public class AppointmentController {
     /**
      * Update appointment status
      * PATCH /api/appointments/{id}/status
+     * Access: DOCTOR or ADMIN
      */
     @PatchMapping("/{id}/status")
+    @PreAuthorize("hasAnyRole('DOCTOR', 'ADMIN')")
     public ResponseEntity<ApiResponse<AppointmentResponse>> updateAppointmentStatus(
             @PathVariable UUID id,
             @RequestParam AppointmentStatus status) {
@@ -262,8 +277,10 @@ public class AppointmentController {
     /**
      * Delete an appointment
      * DELETE /api/appointments/{id}
+     * Access: ADMIN only
      */
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deleteAppointment(@PathVariable UUID id) {
         appointmentService.delete(id);
         return ResponseEntity.ok(
