@@ -1,12 +1,8 @@
 package com.medislot.demo.dto.doctor;
 
-import jakarta.validation.constraints.NotBlank;
-
 public class DoctorUpdateRequest {
-    @NotBlank(message = "Full name is required")
     private String fullName;
 
-    @NotBlank(message = "Specialty is required")
     private String specialty;
 
     private Boolean active;

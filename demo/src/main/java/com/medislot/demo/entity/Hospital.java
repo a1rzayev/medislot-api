@@ -3,6 +3,9 @@ package com.medislot.demo.entity;
 import com.medislot.demo.entity.base.BaseEntity;
 import jakarta.persistence.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "hospitals")
 public class Hospital extends BaseEntity {
@@ -15,6 +18,9 @@ public class Hospital extends BaseEntity {
 
     @Column(name = "active", nullable = false)
     private Boolean active = true;
+
+    @OneToMany(mappedBy = "hospital")
+    private Set<DoctorHospital> doctors = new HashSet<>();
 
     public String getName() {
         return name;
@@ -38,6 +44,14 @@ public class Hospital extends BaseEntity {
 
     public void setActive(Boolean active) {
         this.active = active;
+    }
+
+    public Set<DoctorHospital> getDoctors() {
+        return doctors;
+    }
+
+    public void setDoctors(Set<DoctorHospital> doctors) {
+        this.doctors = doctors;
     }
 }
 

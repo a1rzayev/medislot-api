@@ -1,11 +1,13 @@
 package com.medislot.demo.dto.slot;
 
 import com.medislot.demo.entity.SlotStatus;
+import com.medislot.demo.validation.ValidTimeRange;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
+@ValidTimeRange
 public class SlotCreateRequest {
     @NotNull(message = "Doctor ID is required")
     private UUID doctorId;
