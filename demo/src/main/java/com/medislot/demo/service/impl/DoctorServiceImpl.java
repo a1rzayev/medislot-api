@@ -113,4 +113,18 @@ public class DoctorServiceImpl implements DoctorService {
     public boolean existsById(UUID id) {
         return doctorRepository.existsById(id);
     }
+    
+    @Override
+    public List<DoctorResponse> findBySpecialtyIgnoreCase(String specialty) {
+        return doctorRepository.findBySpecialtyIgnoreCase(specialty).stream()
+                .map(doctorMapper::toResponse)
+                .collect(Collectors.toList());
+    }
+    
+    @Override
+    public List<DoctorResponse> findActiveBySpecialtyIgnoreCase(String specialty) {
+        return doctorRepository.findByActiveTrueAndSpecialtyIgnoreCase(specialty).stream()
+                .map(doctorMapper::toResponse)
+                .collect(Collectors.toList());
+    }
 }
