@@ -26,11 +26,13 @@ public class Appointment extends BaseEntity {
     private AppointmentStatus status = AppointmentStatus.BOOKED;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "doctor_id", insertable = false, updatable = false)
+    @JoinColumn(name = "doctor_id", insertable = false, updatable = false, nullable = false)
+    @org.hibernate.annotations.OnDelete(action = org.hibernate.annotations.OnDeleteAction.RESTRICT)
     private Doctor doctor;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "hospital_id", insertable = false, updatable = false)
+    @JoinColumn(name = "hospital_id", insertable = false, updatable = false, nullable = false)
+    @org.hibernate.annotations.OnDelete(action = org.hibernate.annotations.OnDeleteAction.RESTRICT)
     private Hospital hospital;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -38,7 +40,8 @@ public class Appointment extends BaseEntity {
     private Slot slot;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "patient_id", insertable = false, updatable = false)
+    @JoinColumn(name = "patient_id", insertable = false, updatable = false, nullable = false)
+    @org.hibernate.annotations.OnDelete(action = org.hibernate.annotations.OnDeleteAction.RESTRICT)
     private Patient patient;
 
     public UUID getDoctorId() {
