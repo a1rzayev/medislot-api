@@ -1,0 +1,31 @@
+package com.medislot.demo.repository;
+
+import com.medislot.demo.entity.Doctor;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.UUID;
+
+@Repository
+public interface DoctorRepository extends JpaRepository<Doctor, UUID> {
+    
+    /**
+     * Find all active doctors
+     */
+    List<Doctor> findByActiveTrue();
+    
+    /**
+     * Check if doctor has any slots
+     */
+    @Query("SELECT CASE WHEN COUNT(s) > 0 THEN true ELSE false END FROM Slot s WHERE s.doctorId = :doctorId")
+    boolean hasSlots(@Param("doctorId") UUID doctorId);
+    
+    /**
+     * Check if doctor has any appointments
+     */
+    @Query("SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END FROM Appointment a WHERE a.doctorId = :doctorId")
+    boolean hasAppointments(@Param("doctorId") UUID doctorId);
+}
