@@ -4,6 +4,20 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+# Log files
+*.log
+error*.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# Application-specific local configuration (if any)
+application-local.properties
+application-local.yml
+*.local.properties
+*.local.yml
+
 ### STS ###
 .apt_generated
 .classpath
