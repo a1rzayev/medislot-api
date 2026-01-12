@@ -235,6 +235,8 @@ public class AppointmentController {
         AppointmentCreateRequest newRequest = new AppointmentCreateRequest();
         newRequest.setSlotId(newSlotId);
         newRequest.setPatientId(currentAppointment.getPatientId());
+        newRequest.setDoctorId(currentAppointment.getDoctorId());
+        newRequest.setHospitalId(currentAppointment.getHospitalId());
         
         AppointmentResponse newAppointment = appointmentService.create(newRequest);
         
