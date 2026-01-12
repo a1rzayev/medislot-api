@@ -31,11 +31,13 @@ public class Slot extends BaseEntity {
     private SlotStatus status = SlotStatus.AVAILABLE;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "doctor_id", insertable = false, updatable = false)
+    @JoinColumn(name = "doctor_id", insertable = false, updatable = false, nullable = false)
+    @org.hibernate.annotations.OnDelete(action = org.hibernate.annotations.OnDeleteAction.RESTRICT)
     private Doctor doctor;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "hospital_id", insertable = false, updatable = false)
+    @JoinColumn(name = "hospital_id", insertable = false, updatable = false, nullable = false)
+    @org.hibernate.annotations.OnDelete(action = org.hibernate.annotations.OnDeleteAction.RESTRICT)
     private Hospital hospital;
 
     @OneToOne(mappedBy = "slot")

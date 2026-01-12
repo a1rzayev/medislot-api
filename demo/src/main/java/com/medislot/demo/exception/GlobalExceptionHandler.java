@@ -4,30 +4,30 @@ import com.medislot.demo.dto.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
+        List<String> errorMessages = new ArrayList<>();
+        
         ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
+            if (error instanceof FieldError) {
+                FieldError fieldError = (FieldError) error;
+                errorMessages.add(fieldError.getField() + ": " + fieldError.getDefaultMessage());
+            } else if (error instanceof ObjectError) {
+                ObjectError objectError = (ObjectError) error;
+                errorMessages.add(objectError.getDefaultMessage());
+            }
         });
-
-        List<String> errorMessages = errors.entrySet().stream()
-                .map(entry -> entry.getKey() + ": " + entry.getValue())
-                .collect(Collectors.toList());
 
         ErrorResponse errorResponse = new ErrorResponse("Validation failed", errorMessages);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
@@ -43,6 +43,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException ex) {
         ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), "NOT_FOUND");
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
+    @ExceptionHandler(DoctorDeletionNotAllowedException.class)
+    public ResponseEntity<ErrorResponse> handleDoctorDeletionNotAllowedException(DoctorDeletionNotAllowedException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), "CONFLICT");
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
 
     @ExceptionHandler(RuntimeException.class)

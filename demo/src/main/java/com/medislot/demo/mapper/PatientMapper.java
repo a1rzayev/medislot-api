@@ -18,6 +18,7 @@ public class PatientMapper {
         response.setFullName(patient.getFullName());
         response.setPhone(patient.getPhone());
         response.setEmail(patient.getEmail());
+        response.setActive(patient.getActive());
         response.setCreatedAt(patient.getCreatedAt());
         return response;
     }
@@ -31,6 +32,7 @@ public class PatientMapper {
         patient.setFullName(request.getFullName());
         patient.setPhone(request.getPhone());
         patient.setEmail(request.getEmail());
+        patient.setActive(request.getActive() != null ? request.getActive() : true);
         return patient;
     }
 }

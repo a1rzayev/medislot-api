@@ -8,6 +8,7 @@ public class PatientResponse {
     private String fullName;
     private String phone;
     private String email;
+    private Boolean active;
     private OffsetDateTime createdAt;
 
     public UUID getId() {
@@ -40,6 +41,14 @@ public class PatientResponse {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     public OffsetDateTime getCreatedAt() {

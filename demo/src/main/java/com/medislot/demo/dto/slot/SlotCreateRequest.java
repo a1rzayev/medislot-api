@@ -2,6 +2,7 @@ package com.medislot.demo.dto.slot;
 
 import com.medislot.demo.entity.SlotStatus;
 import com.medislot.demo.validation.ValidTimeRange;
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.OffsetDateTime;
@@ -16,6 +17,7 @@ public class SlotCreateRequest {
     private UUID hospitalId;
 
     @NotNull(message = "Start time is required")
+    @Future(message = "Start time must be in the future")
     private OffsetDateTime startTime;
 
     @NotNull(message = "End time is required")

@@ -1,10 +1,12 @@
 package com.medislot.demo.dto.appointment;
 
 import com.medislot.demo.entity.AppointmentStatus;
+import com.medislot.demo.validation.ValidAppointmentTime;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
+@ValidAppointmentTime
 public class AppointmentCreateRequest {
     @NotNull(message = "Doctor ID is required")
     private UUID doctorId;

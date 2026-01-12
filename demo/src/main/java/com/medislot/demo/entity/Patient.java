@@ -19,6 +19,9 @@ public class Patient extends BaseEntity {
     @Column(name = "email")
     private String email;
 
+    @Column(name = "active", nullable = false)
+    private Boolean active = true;
+
     @OneToMany(mappedBy = "patient")
     private Set<Appointment> appointments = new HashSet<>();
 
@@ -44,6 +47,14 @@ public class Patient extends BaseEntity {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     public Set<Appointment> getAppointments() {
