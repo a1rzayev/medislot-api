@@ -7,6 +7,9 @@ import com.medislot.demo.entity.AppointmentStatus;
 import com.medislot.demo.exception.ResourceNotFoundException;
 import com.medislot.demo.service.AppointmentService;
 import com.medislot.demo.util.ResponseHelper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -25,6 +28,7 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping("/api/appointments")
+@Tag(name = "Appointments", description = "Appointment management APIs - Book, approve, cancel, and reschedule appointments")
 public class AppointmentController {
 
     private final AppointmentService appointmentService;
@@ -39,6 +43,7 @@ public class AppointmentController {
      * Business Rule: Patient can request appointments for available slots
      */
     @PostMapping
+    @Operation(summary = "Create appointment", description = "Patient creates a new appointment request for an available slot")
     public ResponseEntity<ApiResponse<AppointmentResponse>> createAppointment(
             @Valid @RequestBody AppointmentCreateRequest request) {
         AppointmentResponse appointment = appointmentService.create(request);
@@ -184,9 +189,10 @@ public class AppointmentController {
      * Business Rule: Patient can cancel before appointment time
      */
     @PostMapping("/{id}/cancel/patient")
+    @Operation(summary = "Cancel appointment (Patient)", description = "Patient cancels their appointment before the scheduled time")
     public ResponseEntity<ApiResponse<AppointmentResponse>> cancelAppointmentByPatient(
-            @PathVariable UUID id,
-            @RequestParam UUID patientId) {
+            @Parameter(description = "Appointment ID") @PathVariable UUID id,
+            @Parameter(description = "Patient ID for authorization") @RequestParam UUID patientId) {
         AppointmentResponse appointment = appointmentService.cancelByPatient(id, patientId);
         return ResponseEntity.ok(
                 ResponseHelper.success(appointment, "Appointment cancelled by patient successfully"));
@@ -198,9 +204,10 @@ public class AppointmentController {
      * Business Rule: Doctor can only cancel appointments for same day
      */
     @PostMapping("/{id}/cancel/doctor")
+    @Operation(summary = "Cancel appointment (Doctor)", description = "Doctor cancels appointment (same day only)")
     public ResponseEntity<ApiResponse<AppointmentResponse>> cancelAppointmentByDoctor(
-            @PathVariable UUID id,
-            @RequestParam UUID doctorId) {
+            @Parameter(description = "Appointment ID") @PathVariable UUID id,
+            @Parameter(description = "Doctor ID for authorization") @RequestParam UUID doctorId) {
         AppointmentResponse appointment = appointmentService.cancelByDoctor(id, doctorId);
         return ResponseEntity.ok(
                 ResponseHelper.success(appointment, "Appointment cancelled by doctor successfully"));

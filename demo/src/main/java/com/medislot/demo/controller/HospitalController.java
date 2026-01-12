@@ -6,6 +6,7 @@ import com.medislot.demo.dto.hospital.HospitalResponse;
 import com.medislot.demo.exception.ResourceNotFoundException;
 import com.medislot.demo.service.HospitalService;
 import com.medislot.demo.util.ResponseHelper;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping("/api/hospitals")
+@Tag(name = "Hospitals", description = "Hospital management APIs - Create, read, and manage hospitals")
 public class HospitalController {
 
     private final HospitalService hospitalService;

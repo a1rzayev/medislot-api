@@ -7,6 +7,7 @@ import com.medislot.demo.entity.SlotStatus;
 import com.medislot.demo.exception.ResourceNotFoundException;
 import com.medislot.demo.service.AvailabilityService;
 import com.medislot.demo.util.ResponseHelper;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,7 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping("/api/availability")
+@Tag(name = "Availability", description = "Slot/Availability management APIs - Manage doctor availability slots and schedules")
 public class AvailabilityController {
 
     private final AvailabilityService availabilityService;

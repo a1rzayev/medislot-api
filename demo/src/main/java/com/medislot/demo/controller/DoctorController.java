@@ -7,6 +7,9 @@ import com.medislot.demo.dto.doctor.DoctorUpdateRequest;
 import com.medislot.demo.exception.ResourceNotFoundException;
 import com.medislot.demo.service.DoctorService;
 import com.medislot.demo.util.ResponseHelper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +24,7 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping("/api/doctors")
+@Tag(name = "Doctors", description = "Doctor management APIs - Create, read, update, and manage doctors")
 public class DoctorController {
 
     private final DoctorService doctorService;
@@ -34,6 +38,7 @@ public class DoctorController {
      * POST /api/doctors
      */
     @PostMapping
+    @Operation(summary = "Create a new doctor", description = "Creates a new doctor in the system")
     public ResponseEntity<ApiResponse<DoctorResponse>> createDoctor(
             @Valid @RequestBody DoctorCreateRequest request) {
         DoctorResponse doctor = doctorService.create(request);
@@ -48,9 +53,10 @@ public class DoctorController {
      * Supports pagination: /api/doctors?page=0&size=10&sort=fullName,asc
      */
     @GetMapping
+    @Operation(summary = "Get all doctors", description = "Retrieves all doctors with optional filtering by specialization (case-insensitive) and active status")
     public ResponseEntity<ApiResponse<List<DoctorResponse>>> getAllDoctors(
-            @RequestParam(required = false) String specialization,
-            @RequestParam(required = false) Boolean active) {
+            @Parameter(description = "Filter by specialty (case-insensitive)") @RequestParam(required = false) String specialization,
+            @Parameter(description = "Filter by active status") @RequestParam(required = false) Boolean active) {
         
         List<DoctorResponse> doctors;
         
@@ -76,7 +82,9 @@ public class DoctorController {
      * GET /api/doctors/{id}
      */
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<DoctorResponse>> getDoctorById(@PathVariable UUID id) {
+    @Operation(summary = "Get doctor by ID", description = "Retrieves a specific doctor by their unique identifier")
+    public ResponseEntity<ApiResponse<DoctorResponse>> getDoctorById(
+            @Parameter(description = "Doctor UUID") @PathVariable UUID id) {
         DoctorResponse doctor = doctorService.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Doctor", id));
         return ResponseEntity.ok(
