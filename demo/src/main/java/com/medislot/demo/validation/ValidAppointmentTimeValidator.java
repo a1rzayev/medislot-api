@@ -7,6 +7,8 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Objects;
+
 public class ValidAppointmentTimeValidator implements ConstraintValidator<ValidAppointmentTime, AppointmentCreateRequest> {
 
     @Autowired
@@ -18,6 +20,11 @@ public class ValidAppointmentTimeValidator implements ConstraintValidator<ValidA
             return true; // Let @NotNull handle null validation
         }
 
+        // Skip validation if doctorId or hospitalId is null (let @NotNull handle it)
+        if (request.getDoctorId() == null || request.getHospitalId() == null) {
+            return true;
+        }
+
         // Check if repository is available (might not be in test contexts)
         if (slotRepository == null) {
             return true;
@@ -26,8 +33,8 @@ public class ValidAppointmentTimeValidator implements ConstraintValidator<ValidA
         // Verify slot exists, is available, and belongs to the specified doctor and hospital
         return slotRepository.findById(request.getSlotId())
                 .map(slot -> slot.getStatus() == SlotStatus.AVAILABLE
-                        && slot.getDoctorId().equals(request.getDoctorId())
-                        && slot.getHospitalId().equals(request.getHospitalId()))
+                        && Objects.equals(slot.getDoctorId(), request.getDoctorId())
+                        && Objects.equals(slot.getHospitalId(), request.getHospitalId()))
                 .orElse(false);
     }
 }
