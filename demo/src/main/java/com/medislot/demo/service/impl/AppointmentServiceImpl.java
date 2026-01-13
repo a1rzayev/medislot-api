@@ -274,4 +274,18 @@ public class AppointmentServiceImpl implements AppointmentService {
     public boolean existsById(UUID id) {
         return appointmentRepository.existsById(id);
     }
+    
+    @Override
+    public List<AppointmentResponse> findByDoctorIdAndDate(UUID doctorId, OffsetDateTime date) {
+        return appointmentRepository.findByDoctorIdAndDate(doctorId, date).stream()
+                .map(appointmentMapper::toResponse)
+                .collect(Collectors.toList());
+    }
+    
+    @Override
+    public List<AppointmentResponse> findByCriteria(UUID doctorId, UUID patientId, UUID hospitalId, AppointmentStatus status) {
+        return appointmentRepository.findByCriteria(doctorId, patientId, hospitalId, status).stream()
+                .map(appointmentMapper::toResponse)
+                .collect(Collectors.toList());
+    }
 }

@@ -59,4 +59,22 @@ public interface AppointmentService extends BaseService<Appointment, UUID, Appoi
      * @return the updated appointment response
      */
     AppointmentResponse updateStatus(UUID appointmentId, AppointmentStatus status);
+    
+    /**
+     * Find appointments by doctor and date
+     * @param doctorId the doctor ID
+     * @param date the appointment date
+     * @return list of appointment responses
+     */
+    List<AppointmentResponse> findByDoctorIdAndDate(UUID doctorId, java.time.OffsetDateTime date);
+    
+    /**
+     * Find appointments by multiple criteria
+     * @param doctorId the doctor ID (optional)
+     * @param patientId the patient ID (optional)
+     * @param hospitalId the hospital ID (optional)
+     * @param status the appointment status (optional)
+     * @return list of appointment responses
+     */
+    List<AppointmentResponse> findByCriteria(UUID doctorId, UUID patientId, UUID hospitalId, AppointmentStatus status);
 }
