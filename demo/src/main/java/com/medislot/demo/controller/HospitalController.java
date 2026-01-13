@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,8 +34,10 @@ public class HospitalController {
     /**
      * Create a new hospital
      * POST /api/hospitals
+     * Access: ADMIN only
      */
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<HospitalResponse>> createHospital(
             @Valid @RequestBody HospitalCreateRequest request) {
         HospitalResponse hospital = hospitalService.create(request);
@@ -99,8 +102,10 @@ public class HospitalController {
     /**
      * Deactivate a hospital (soft delete)
      * POST /api/hospitals/{id}/deactivate
+     * Access: ADMIN only
      */
     @PostMapping("/{id}/deactivate")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<HospitalResponse>> deactivateHospital(@PathVariable UUID id) {
         HospitalResponse hospital = hospitalService.deactivate(id);
         return ResponseEntity.ok(
@@ -110,8 +115,10 @@ public class HospitalController {
     /**
      * Activate a hospital
      * POST /api/hospitals/{id}/activate
+     * Access: ADMIN only
      */
     @PostMapping("/{id}/activate")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<HospitalResponse>> activateHospital(@PathVariable UUID id) {
         HospitalResponse hospital = hospitalService.activate(id);
         return ResponseEntity.ok(

@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -90,8 +91,10 @@ public class PatientController {
     /**
      * Update a patient
      * PUT /api/patients/{id}
+     * Access: ADMIN only (or patient themselves for future enhancement)
      */
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<PatientResponse>> updatePatient(
             @PathVariable UUID id,
             @Valid @RequestBody PatientCreateRequest request) {
@@ -103,8 +106,10 @@ public class PatientController {
     /**
      * Deactivate a patient (soft delete)
      * POST /api/patients/{id}/deactivate
+     * Access: ADMIN only
      */
     @PostMapping("/{id}/deactivate")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<PatientResponse>> deactivatePatient(@PathVariable UUID id) {
         PatientResponse patient = patientService.deactivate(id);
         return ResponseEntity.ok(
@@ -114,8 +119,10 @@ public class PatientController {
     /**
      * Activate a patient
      * POST /api/patients/{id}/activate
+     * Access: ADMIN only
      */
     @PostMapping("/{id}/activate")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<PatientResponse>> activatePatient(@PathVariable UUID id) {
         PatientResponse patient = patientService.activate(id);
         return ResponseEntity.ok(
